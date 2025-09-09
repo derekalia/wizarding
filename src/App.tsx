@@ -1,6 +1,7 @@
 import { useState, useRef, ChangeEvent } from 'react'
 import { fal } from '@fal-ai/client'
 import { Analytics } from '@vercel/analytics/react'
+import { Tweet } from 'react-tweet'
 
 interface WorkflowEvent {
   type: 'submit' | 'completion' | 'error' | 'output'
@@ -195,7 +196,7 @@ function App() {
         <div className="flex justify-center">
           <div className="inline-flex items-center gap-2 bg-yellow-100 border border-yellow-300 text-yellow-800 px-3 py-1.5 rounded-full text-sm font-medium">
             <span className="text-yellow-600">⚠️</span>
-            <span>Running this workflow uses ~$13 of credits</span>
+            <span>Running this workflow uses ~$5 of credits</span>
           </div>
         </div>
         
@@ -267,72 +268,72 @@ function App() {
         )}
 
         {/* Image Upload Section */}
-        {apiKeySet && (
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-              📤 Upload Images (up to 4)
-            </h2>
-            <p className="text-gray-600 mb-6 text-sm">
-              Select images that will serve as inspiration for your adventure video locations
-            </p>
-            
-            <input
-              type="file"
-              ref={fileInputRef}
-              multiple
-              accept="image/*"
-              onChange={handleImageUpload}
-              className="hidden"
-            />
-            
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-              {Array.from({ length: 4 }).map((_, index) => (
-                <div key={index} className="aspect-square border-2 border-dashed border-gray-300 rounded-lg">
-                  {images[index] ? (
-                    <div className="relative h-full">
-                      <img
-                        src={URL.createObjectURL(images[index])}
-                        alt="Preview"
-                        className="w-full h-full object-cover rounded-lg"
-                      />
-                      <button
-                        className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm hover:bg-red-600"
-                        onClick={() => removeImage(index)}
-                      >
-                        ×
-                      </button>
-                      <div className="absolute bottom-2 left-2 right-2">
-                        <p className="text-xs bg-black bg-opacity-60 text-white p-1 rounded truncate">
-                          {images[index].name}
-                        </p>
-                      </div>
-                    </div>
-                  ) : (
+        <div className="bg-white rounded-lg shadow-md p-6">
+          <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+            📤 Upload Images (up to 4)
+          </h2>
+          <p className="text-gray-600 mb-6 text-sm">
+            Select images that will serve as inspiration for your adventure video locations
+          </p>
+          
+          <input
+            type="file"
+            ref={fileInputRef}
+            multiple
+            accept="image/*"
+            onChange={handleImageUpload}
+            className="hidden"
+          />
+          
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+            {Array.from({ length: 4 }).map((_, index) => (
+              <div key={index} className="aspect-square border-2 border-dashed border-gray-300 rounded-lg">
+                {images[index] ? (
+                  <div className="relative h-full">
+                    <img
+                      src={URL.createObjectURL(images[index])}
+                      alt="Preview"
+                      className="w-full h-full object-cover rounded-lg"
+                    />
                     <button
-                      onClick={() => fileInputRef.current?.click()}
-                      className="w-full h-full flex flex-col items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-gray-50 rounded-lg transition-colors"
+                      className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm hover:bg-red-600"
+                      onClick={() => removeImage(index)}
                     >
-                      <div className="text-2xl mb-2">📤</div>
-                      <span className="text-sm">Click to upload</span>
+                      ×
                     </button>
-                  )}
-                </div>
-              ))}
-            </div>
+                    <div className="absolute bottom-2 left-2 right-2">
+                      <p className="text-xs bg-black bg-opacity-60 text-white p-1 rounded truncate">
+                        {images[index].name}
+                      </p>
+                    </div>
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => fileInputRef.current?.click()}
+                    className="w-full h-full flex flex-col items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-gray-50 rounded-lg transition-colors"
+                  >
+                    <div className="text-2xl mb-2">📤</div>
+                    <span className="text-sm">Click to upload</span>
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
 
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-              <div className="flex items-start gap-3">
-                <span className="text-blue-600 text-lg">✨</span>
-                <div>
-                  <h3 className="font-semibold text-blue-900">Adventure Video Generator</h3>
-                  <p className="text-sm text-blue-700 mt-1">
-                    Upload images to generate four adventure video locations with a consistent character perspective. 
-                    The AI will create detailed environment descriptions for video generation.
-                  </p>
-                </div>
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+            <div className="flex items-start gap-3">
+              <span className="text-blue-600 text-lg">✨</span>
+              <div>
+                <h3 className="font-semibold text-blue-900">Adventure Video Generator</h3>
+                <p className="text-sm text-blue-700 mt-1">
+                  Upload images to generate four adventure video locations with a consistent character perspective. 
+                  The AI will create detailed environment descriptions for video generation.
+                </p>
               </div>
             </div>
+          </div>
 
+          {apiKeySet ? (
             <button 
               onClick={submitWorkflow}
               disabled={images.length === 0 || isLoading}
@@ -349,8 +350,17 @@ function App() {
                 </span>
               )}
             </button>
-          </div>
-        )}
+          ) : (
+            <button 
+              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+              className="w-full bg-gray-600 text-white py-3 px-6 rounded-md hover:bg-gray-700 transition-colors text-lg font-medium"
+            >
+              <span className="flex items-center justify-center gap-2">
+                🔐 Enter API Key to Get Started
+              </span>
+            </button>
+          )}
+        </div>
 
         {/* Progress Section */}
         {isLoading && (
@@ -456,6 +466,20 @@ function App() {
             )}
           </div>
         )}
+        
+        {/* How it Works Section */}
+        <div className="mt-12 pt-8 border-t border-gray-200">
+          <div className="flex justify-center mb-6">
+            <span className="inline-flex items-center px-4 py-2 bg-blue-100 text-blue-800 text-sm font-semibold rounded-full">
+              How it works
+            </span>
+          </div>
+          <div className="flex justify-center">
+            <div className="max-w-xl w-full">
+              <Tweet id="1964963962417799612" />
+            </div>
+          </div>
+        </div>
       </div>
       <Analytics />
     </div>
